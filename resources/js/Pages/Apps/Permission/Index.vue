@@ -61,7 +61,7 @@
                     </Table>
                 </div>
                 <div v-if="isData">
-                    <Pagination :count="permissions" />
+                    <Pagination :count="permissions" :perPage="data.params.perPage" :links="permissions.links" :search="data.params.search" />
                 </div>
             </section>
         </template>
@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import Info from '@/Components/widget/Info.vue';
