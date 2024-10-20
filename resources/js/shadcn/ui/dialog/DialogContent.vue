@@ -1,14 +1,14 @@
 <script setup>
-import { computed } from "vue";
+import { cn } from '@/lib/utils';
+import { X } from 'lucide-vue-next';
 import {
   DialogClose,
   DialogContent,
   DialogOverlay,
   DialogPortal,
   useForwardPropsEmits,
-} from "radix-vue";
-import { X } from "lucide-vue-next";
-import { cn } from "@/lib/utils";
+} from 'radix-vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   forceMount: { type: Boolean, required: false },
@@ -19,12 +19,12 @@ const props = defineProps({
   class: { type: null, required: false },
 });
 const emits = defineEmits([
-  "escapeKeyDown",
-  "pointerDownOutside",
-  "focusOutside",
-  "interactOutside",
-  "openAutoFocus",
-  "closeAutoFocus",
+  'escapeKeyDown',
+  'pointerDownOutside',
+  'focusOutside',
+  'interactOutside',
+  'openAutoFocus',
+  'closeAutoFocus',
 ]);
 
 const delegatedProps = computed(() => {
