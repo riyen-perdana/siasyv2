@@ -3,18 +3,19 @@
     <Head title="Otorisasi Pengguna Aplikasi" />
     <AuthenticatedLayout>
         <template #content>
-            <Info title="Otorisasi Pengguna Aplikasi" :isGreating=false :breadcrumb="breadcrumb" :subtitles="subtitles" />
+            <Info title="Otorisasi Pengguna Aplikasi" :isGreating=false :breadcrumb="breadcrumb"
+                :subtitles="subtitles" />
             <div class="flex mt-4"></div>
             <div class="flex flex-row items-center justify-end">
-                <Dialog>
+                <Dialog v-model:open="open" :modal="true">
                     <DialogTrigger as-child>
-                        <Button variant="default" class="text-xs rounded-none">
+                        <Button variant="default" class="text-xs rounded-none" @click="open = true">
                             Tambah Otorisasi
                             <Icon :style="{ color: 'text-foreground', 'margin-left': '5px' }"
                                 :icon="'basil:add-outline'" :inline="true" :height="'20'" />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent class="sm:max-w-[425px] md:max-w-[700px]" onInteractOutside='true'>
+                    <DialogContent class="sm:max-w-[425px] md:max-w-[700px]">
                         <DialogHeader>
                             <DialogTitle>
                                 {{ headerDialog }}
@@ -23,7 +24,7 @@
                                 {{ descriptionDialog }}
                             </DialogDescription>
                         </DialogHeader>
-                        <Form :permissions="props.permissions" />
+                        <Form :permissions="props.permissions" @closeModal="closeModal" />
                     </DialogContent>
                 </Dialog>
             </div>
@@ -52,16 +53,19 @@ import {
     DialogTrigger,
 } from '@/shadcn/ui/dialog';
 
-import { Label } from '@/shadcn/ui/label';
-import { Input } from '@/shadcn/ui/input';
 import Form from '@/Pages/Apps/Roles/Form.vue';
 
 const isEditData = ref(false);
+const open = ref(false);
 
 const props = defineProps({
     roles: Object,
     permissions: Array
 });
+
+const closeModal = () => {
+    open.value = false;
+}
 
 const breadcrumb = [
     {
