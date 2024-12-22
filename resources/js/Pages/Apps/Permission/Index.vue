@@ -52,9 +52,8 @@
                             </TableRow>
                             <TableEmpty v-if="!isData" :colspan="2" class="text-[13px]">
                                 <div class="flex flex-col items-center justify-center h-full">
-                                    <Lottie />
-                                    <div class="mb-1 text-sm font-semibold">Data Tidak Ditemukan</div>
-                                    <div>Kami sudah mencari keseluruh sumber data yang kami punya, namun data yang anda minta tidak kami temukan</div>
+                                    <!-- <Lottie /> -->
+                                    <no-data />
                                 </div>
                             </TableEmpty>
                         </TableBody>
@@ -96,6 +95,7 @@ import {
 import Pagination from '@/Components/widget/Pagination.vue';
 import { cloneDeep, debounce, pickBy } from "lodash";
 import Lottie from '@/Components/widget/Lottie.vue';
+import NoData from '@/Components/widget/NoData.vue';
 
 const props = defineProps({
     permissions: Object,

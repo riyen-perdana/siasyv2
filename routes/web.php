@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->prefix('apps')->group(function () {
     Route::get('/perizinan-aplikasi', \App\Http\Controllers\Apps\PermissionController::class)->name('apps.permission.index');
+    Route::get('/perizinan-aplikasi-v2', [\App\Http\Controllers\Apps\PermissionsController::class, 'index'])->name('apps.permissionv2.index');
     Route::get('/otorisasi-aplikasi', [\App\Http\Controllers\Apps\RolesController::class, 'index'] )->name('apps.roles.index');
 });
 

@@ -7,6 +7,7 @@
             <MenubarTrigger class="text-[13px] font-medium">Authentikasi</MenubarTrigger>
             <MenubarContent>
                 <MenubarItem class="text-[13px]"><Link :href="route('apps.permission.index')">Perizinan Aplikasi</Link></MenubarItem>
+                <MenubarItem class="text-[13px]"><Link :href="route('apps.permissionv2.index')">Perizinan Aplikasi V2</Link></MenubarItem>
                 <MenubarItem class="text-[13px]"><Link :href="route('apps.roles.index')">Otorisasi Aplikasi</Link></MenubarItem>
                 <MenubarItem class="text-[13px]">Pengguna</MenubarItem>
                 <MenubarSeparator />
