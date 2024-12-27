@@ -20,6 +20,9 @@ class PermissionsController extends Controller
         $filters = [];
 
         $permission = Permission::query()
+                        ->when($request->has('name'), function ($query) use ($request) {
+                            $query->where('name', 'like', '%' . $request->input('name') . '%');
+                        })
                         ->orderBy($sortField, $sortDirection)
                         ->paginate($perPage);
     

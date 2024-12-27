@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
+use App\Http\Requests\User\UserIndexRequest;
 
 class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function __invoke(Request $request)
+    public function __invoke(UserIndexRequest $request)
     {
         $permission = Permission::query();
 
@@ -20,13 +21,17 @@ class PermissionController extends Controller
             $permission->where('name','like','%'.$request->search.'%');
         }
 
+        if($request->has('field','order')) {
+            $permission->orderBy($request->field, $request->order);
+        }
+
         $perPage = $request->has('perPage') ? $request->perPage : 10;
 
         return Inertia::render('Apps/Permission/Index', [
             'perPage' => intval($perPage),
             'permissions' => $permission->paginate($perPage),
-            'filters' => $request->all(['search'])
+            'filters' => $request->all(['search','field','order'])
         ]);
-        //dd($request);
+
     }
 }

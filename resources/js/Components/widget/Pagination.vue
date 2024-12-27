@@ -1,64 +1,99 @@
 <template>
-    <div class="flex flex-row justify-between text-center gap-y-2">
-        <div class="text-[13px] text-muted-foreground mt-4">
-            Menampilkan data {{ props.count.from }} sampai {{ props.count.to }} dari {{ props.count.total }} data
+    <div class="flex items-center justify-end space-x-2 py-4">
+        <div class="flex-1 text-[13px] font-medium text-muted-foreground">
+            Menampilkan data {{ props.count.from }} sampai
+            {{ props.count.to }} dari {{ props.count.total }} data
         </div>
-        <div class="text-[10px] text-muted-foreground mt-3">
-            <Pagination v-slot="{ page }" :total="total" :sibling-count="1" show-edges :default-page="1"
-                class="text-xs">
-                <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-                    <!-- <PaginationFirst class="w-8 h-8 p-0" />
-                    <PaginationPrev class="w-8 h-8 p-0" /> -->
-
-                    <template v-for="(item, index ) in props.links">
-                        <PaginationListItem v-if="item.label != 'null'" :index="index" :value="item.label">
-                            <Button class="h-8 p-0 text-xs border-none min-w-8"
-                                :variant="item.active === true ? 'default' : 'outline'">
-                                <div v-if="props.search === null">
-                                    <Link preserve-scroll v-html="item.label"
-                                        :href="item.url === null ? '#' : item.url + '&perPage=' + perPage">
-                                    </Link>
-                                </div>
-                                <div v-else>
-                                    <Link preserve-scroll v-html="item.label"
-                                        :href="item.url === null ? '#' : item.url + '&perPage=' + perPage + '&search=' + search">
-                                    </Link>
-                                </div>
-                            </Button>
-                        </PaginationListItem>
-                        <PaginationEllipsis v-else :index="index" />
-                    </template>
-
-                    <!-- <PaginationNext class="w-8 h-8 p-0" />
-                    <PaginationLast class="w-8 h-8 p-0" /> -->
-                </PaginationList>
-            </Pagination>
+        <div class="flex items-center space-x-2">
+            <Button
+                variant="outline"
+                class="hidden h-8 w-8 p-0 lg:flex"
+                :disabled="noPreviousPage"
+                @click="loadPage(1)"
+            >
+                <DoubleArrowLeftIcon class="h-4 w-4" />
+            </Button>
+            <Button
+                variant="outline"
+                class="hidden h-8 w-8 p-0 lg:flex"
+                :disabled="firstDisabled"
+                @click="loadPage(props.count?.current_page - 1)"
+            >
+                <ChevronLeftIcon class="h-4 w-4" />
+            </Button>
+            <Button
+                variant="outline"
+                class="hidden h-8 w-8 p-0 lg:flex"
+                @click="loadPage(props.count?.current_page + 1)"
+                :disabled="lastDisabled"
+            >
+                <ChevronRightIcon class="h-4 w-4" />
+            </Button>
+            <Button
+                variant="outline"
+                class="hidden h-8 w-8 p-0 lg:flex"
+                :disabled="noNextPage"
+                @click="loadPage(props.count?.last_page)"
+            >
+                <DoubleArrowRightIcon class="h-4 w-4" />
+            </Button>
         </div>
     </div>
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from "@inertiajs/vue3";
+import Button from "@/shadcn/ui/button/Button.vue";
 import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationLast,
-    PaginationList,
-    PaginationListItem,
-    PaginationNext,
-    PaginationPrev,
-} from '@/shadcn/ui/pagination';
-import Button from '@/shadcn/ui/button/Button.vue';
-import { computed } from 'vue';
+    ChevronRightIcon,
+    ChevronLeftIcon,
+    DoubleArrowLeftIcon,
+    DoubleArrowRightIcon,
+} from "@radix-icons/vue";
+
+import { computed } from "vue";
+
 const props = defineProps({
     count: Object,
     perPage: String,
     links: Object,
-    search: String
+    search: String,
 });
-const total = computed(() => {
-    let total = Math.ceil(props.count.total / Number(props.perPage)) * 10;
-    return total.toString();
-})
+
+const loadPage = (page) => {
+    router.get(
+        "/apps/perizinan-aplikasi",
+        {
+            page: page,
+            perPage: props.perPage,
+            search: props.search,
+        },
+        {
+            replace: true,
+            preserveState: true,
+            preserveScroll: true,
+        }
+    );
+};
+
+const noPreviousPage = computed(() => {
+    return props.count?.current_page - 1 <= 0;
+});
+
+const noNextPage = computed(() => {
+    return props.count?.current_page >= props.count?.last_page;
+});
+
+
+const firstDisabled = computed(() => {
+    if (props.count?.current_page === 1) {
+        return true;
+    }
+});
+
+const lastDisabled = computed(() => {
+    if (props.count?.current_page === props.count?.last_page) {
+        return true;
+    }
+});
 </script>
