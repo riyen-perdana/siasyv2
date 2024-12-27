@@ -6,8 +6,8 @@
             <Info title="Perizinan Aplikasi" :isGreating=false :breadcrumb="breadcrumb" :subtitles="subtitles" />
             <div class="flex mt-4"></div>
             <div class="flex items-center justify-between mb-10">
-                <div class="flex lg:w-full">
-                    <div class="relative lg:w-[100%] md:w-[75%]">
+                <div class="flex lg:w-full md:w-full">
+                    <div class="relative lg:w-full md:w-full">
                         <Input v-model="data.params.search" placeholder="Cari Perizinan Aplikasi" class="text-[13px] w-[50%] pl-10" />
                         <span class="absolute inset-y-0 flex items-center justify-center px-2 start-0">
                             <Search class="size-4 text-muted-foreground" />
@@ -15,9 +15,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-end w-full space-x-2">
-                    <div>
+                    <p class="text-[13px] font-medium">Baris per Halaman</p>
+                    <div class="flex items-center justify-end space-x-2 py-4">
                         <Select :model-value="perPageData" @update:model-value="perPageData = $event">
-                            <SelectTrigger class="rounded-none h-9 focus:ring-0 ring-inset">
+                            <SelectTrigger class="rounded-none h-9 focus:ring-0 ring-inset w-[70px]">
                                 <SelectValue class="text-[13px]" :placeholder="perPageData" />
                             </SelectTrigger>
                             <SelectContent class="text-[13px] rounded-none focus:ring-0">
@@ -30,31 +31,34 @@
                             </SelectContent>
                         </Select>
                     </div>
-                    <div class="text-[13px] text-muted-foreground">Entries</div>
                 </div>
             </div>
             <section name="table">
                 <div class="flex w-full">
-                    <Table class="text-[13px]" :class="isData ? 'border-b' : ''">
+                    <Table class="text-[13px] rounded-md border" :class="isData ? 'border-b' : ''">
                         <TableHeader>
                             <TableRow>
                                 <TableHead class="w-[3%]">
                                     No.
                                 </TableHead>
-                                <TableHead class="w-[95%]">Perizinan Aplikasi</TableHead>
+                                <TableHead class="w-[95%]">
+                                    <Button variant="ghost" class="text-[13px]" @click="order('name')">
+                                        Perizinan Aplikasi
+                                        <ArrowUpDown class="h-4 w-4 ml-2" />
+                                    </Button>
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             <TableRow v-for="(item, index) in permissions?.data" :key="index">
                                 <TableCell>{{ (permissions?.current_page - 1) * permissions?.per_page + index + 1 }}.
                                 </TableCell>
-                                <TableCell>{{ item.name }}</TableCell>
+                                <TableCell class="text-[13px] !px-8">{{ item.name }}</TableCell>
                             </TableRow>
                             <TableEmpty v-if="!isData" :colspan="2" class="text-[13px]">
                                 <div class="flex flex-col items-center justify-center h-full">
-                                    <Lottie />
-                                    <div class="mb-1 text-sm font-semibold">Data Tidak Ditemukan</div>
-                                    <div>Kami sudah mencari keseluruh sumber data yang kami punya, namun data yang anda minta tidak kami temukan</div>
+                                    <!-- <Lottie /> -->
+                                    <no-data />
                                 </div>
                             </TableEmpty>
                         </TableBody>
@@ -76,7 +80,6 @@ import Info from '@/Components/widget/Info.vue';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -84,7 +87,7 @@ import {
     TableEmpty
 } from '@/shadcn/ui/table';
 import Input from '@/shadcn/ui/input/Input.vue';
-import { Search } from 'lucide-vue-next';
+import { Search, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-vue-next';
 import {
     Select,
     SelectContent,
@@ -95,7 +98,8 @@ import {
 } from '@/shadcn/ui/select';
 import Pagination from '@/Components/widget/Pagination.vue';
 import { cloneDeep, debounce, pickBy } from "lodash";
-import Lottie from '@/Components/widget/Lottie.vue';
+import NoData from '@/Components/widget/NoData.vue';
+import Button from '@/shadcn/ui/button/Button.vue';
 
 const props = defineProps({
     permissions: Object,
@@ -121,9 +125,16 @@ const perPageData = computed({
 const data = reactive({
     params : {
         search: props.filters.search,
+        field: props.filters.field,
+        order: props.filters.order,
         perPage: perPageData.value
     }
-})
+});
+
+const order = (column) => {
+    data.params.field = column;
+    data.params.order = data.params.order === 'asc' ? 'desc' : 'asc';
+};
 
 const breadcrumb = [
     {

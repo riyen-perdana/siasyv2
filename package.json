@@ -20,10 +20,11 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@radix-icons/vue": "^1.0.0",
         "@tanstack/vue-table": "^8.20.5",
         "@unovis/ts": "^1.4.3-beta.0",
         "@unovis/vue": "^1.4.3-beta.0",
-        "@vueuse/core": "^11.1.0",
+        "@vueuse/core": "^11.3.0",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "lodash": "^4.17.21",
