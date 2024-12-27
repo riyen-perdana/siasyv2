@@ -58,6 +58,8 @@ const props = defineProps({
     perPage: String,
     links: Object,
     search: String,
+    field: String,
+    order: String,
 });
 
 const loadPage = (page) => {
@@ -67,6 +69,8 @@ const loadPage = (page) => {
             page: page,
             perPage: props.perPage,
             search: props.search,
+            field: props.field,
+            order: props.order
         },
         {
             replace: true,

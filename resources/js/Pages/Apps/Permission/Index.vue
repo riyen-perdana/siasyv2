@@ -65,7 +65,7 @@
                     </Table>
                 </div>
                 <div v-if="isData">
-                    <Pagination :count="permissions" :perPage="data.params.perPage" :links="permissions.links" :search="data.params.search" />
+                    <Pagination :count="permissions" :perPage="data.params.perPage" :links="permissions.links" :search="data.params.search" :field="data.params.field" :order="data.params.order" />
                 </div>
             </section>
         </template>
