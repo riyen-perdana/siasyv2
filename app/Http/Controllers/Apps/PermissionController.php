@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Apps;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Permission;
 use App\Http\Requests\User\UserIndexRequest;
+use App\Http\Requests\Permission\PermissionStoreRequest;
 
 class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function __invoke(UserIndexRequest $request)
+    public function index(UserIndexRequest $request)
     {
         $permission = Permission::query();
 
@@ -34,4 +36,30 @@ class PermissionController extends Controller
         ]);
 
     }
+
+    /**
+     * TODO : Store Data Permission to Database
+     * @return \Illuminate\Http\Response
+     */
+    public function store(PermissionStoreRequest $request)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            Permission::create([
+                'name' => $request['nm_permission']
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('apps.permission.index');
+
+        } catch (\Throwable $th) {
+
+            DB::rollback();
+            return redirect()->back()->with('error', $th->getMessage());
+
+        }
+    }   
 }
