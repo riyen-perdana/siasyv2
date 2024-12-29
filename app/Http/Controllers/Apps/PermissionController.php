@@ -48,7 +48,7 @@ class PermissionController extends Controller
         try {
 
             Permission::create([
-                'name' => $request['nm_permission']
+                'name' => $request['nm_perizinan']
             ]);
 
             DB::commit();

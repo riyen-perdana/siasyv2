@@ -41,6 +41,7 @@
                         <Form
                             :errors="$page.props.errors"
                             @closeModal="closeModal"
+                            @toastMessage="toastMessage"
                         />
                     </DialogContent>
                 </Dialog>
@@ -159,17 +160,16 @@
                                             <Button
                                                 class="text-xs px-2 text-red-500 h-2"
                                                 variant="link"
-                                                @click="deleteData(item.id)"
-                                                >Hapus
-                                                <Icon
-                                                    :style="{
-                                                        color: 'text-green-500',
-                                                        'margin-left': '2px',
-                                                    }"
-                                                    :icon="'ri:delete-bin-line'"
-                                                    :inline="true"
-                                                    :height="'15'"
-                                                />
+                                            >Hapus
+                                            <Icon
+                                                :style="{
+                                                    color: 'text-green-500',
+                                                    'margin-left': '2px',
+                                                }"
+                                                :icon="'ri:delete-bin-line'"
+                                                :inline="true"
+                                                :height="'15'"
+                                            />
                                             </Button>
                                         </AlertDialogTrigger>
                                         <AlertDialogContent>
@@ -185,7 +185,7 @@
                                                 <AlertDialogCancel class="text-xs ring-inset rounded-none">
                                                     Batal
                                                 </AlertDialogCancel>
-                                                <AlertDialogAction class="text-xs ring-inset rounded-none bg-red-500 hover:bg-red-600">
+                                                <AlertDialogAction class="text-xs ring-inset rounded-none bg-red-500 hover:bg-red-600" @click="deleteData(item.id)">
                                                     Ya, Saya Yakin
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>
@@ -199,7 +199,7 @@
                             </TableRow>
                             <TableEmpty
                                 v-if="!isData"
-                                :colspan="2"
+                                :colspan="3"
                                 class="text-[13px]"
                             >
                                 <div
@@ -225,6 +225,7 @@
             </section>
         </template>
     </AuthenticatedLayout>
+    <Toaster />
 </template>
 
 <script setup>
@@ -278,6 +279,9 @@ import {
     AlertDialogTrigger,
 } from "@/shadcn/ui/alert-dialog";
 
+import { useToast } from '@/shadcn/ui/toast/use-toast';
+import { Toaster } from '@/shadcn/ui/toast';
+
 import { Icon } from "@iconify/vue";
 import Form from "@/Pages/Apps/Permission/Form.vue";
 
@@ -286,6 +290,8 @@ const props = defineProps({
     filters: Object,
     perPage: Number,
 });
+
+const { toast } = useToast();
 
 const perPageData = computed({
     get: () => props.perPage.toString(),
@@ -349,6 +355,17 @@ const openModal = ref(false);
 
 const closeModal = () => {
     openModal.value = false;
+};
+
+const toastMessage = () => {
+    toast({
+        title: 'Berhasil !!',
+        description: 'Perizinan Aplikasi Berhasil Ditambahkan.',
+        variant: 'success',
+    });
+};
+const deleteData = (id) => {
+    router.delete(`/apps/perizinan-aplikasi/${id}`);
 };
 
 watch(

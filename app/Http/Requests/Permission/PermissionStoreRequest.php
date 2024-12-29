@@ -22,7 +22,7 @@ class PermissionStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nm_perizinan' => 'required|unique:permissions,nm_permission',
+            'nm_perizinan' => 'required|unique:permissions,name',
         ];
     }
 

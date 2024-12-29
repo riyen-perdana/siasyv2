@@ -5,8 +5,6 @@ import { useForm, router } from '@inertiajs/vue3';
 import { Label } from '@/shadcn/ui/label';
 import { Icon } from '@iconify/vue';
 import { onUnmounted, nextTick, ref } from 'vue';
-import { useToast } from '@/shadcn/ui/toast/use-toast';
-import { Toaster } from '@/shadcn/ui/toast';
 
 const props = defineProps({
     errors: Object
@@ -28,6 +26,7 @@ const submitData = () => {
                 form.reset();
                 form.clearErrors();
                 emit('closeModal');
+                emit('toastMessage');
             },
             onError: () => {
                 form.cancel,
@@ -36,7 +35,7 @@ const submitData = () => {
         });
 }
 
-const emit = defineEmits(['closeModal']);
+const emit = defineEmits(['closeModal','toastMessage']);
 
 onUnmounted(() => {
     form.reset();
@@ -64,5 +63,4 @@ onUnmounted(() => {
             </div>
         </div>
     </form>
-    <Toaster />
 </template>
