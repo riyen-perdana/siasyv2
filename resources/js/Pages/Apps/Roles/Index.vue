@@ -7,7 +7,7 @@
                 :subtitles="subtitles" />
             <div class="flex mt-4"></div>
             <div class="flex flex-row items-center justify-end">
-                <Dialog v-model:open="open" :modal="true">
+                <Dialog v-model:open="open" modal="true">
                     <DialogTrigger as-child>
                         <Button variant="default" class="text-xs rounded-none" @click="open = true">
                             Tambah Otorisasi

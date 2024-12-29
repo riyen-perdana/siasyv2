@@ -5,6 +5,29 @@
         <template #content>
             <Info title="Perizinan Aplikasi" :isGreating=false :breadcrumb="breadcrumb" :subtitles="subtitles" />
             <div class="flex mt-4"></div>
+            <div class="flex flex-row items-center justify-end">
+                <Dialog v-model:open="openModal" :modal="true">
+                    <DialogTrigger as-child>
+                        <Button variant="default" class="text-xs rounded-none" @click="openModal = true">
+                            Tambah Perizinan
+                            <Icon :style="{ color: 'text-foreground', 'margin-left': '5px' }"
+                                :icon="'basil:add-outline'" :inline="true" :height="'20'" />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent 
+                        class="sm:max-w-[425px] md:max-w-[700px]">
+                        <DialogHeader>
+                            <DialogTitle>
+                                {{ headerModalDialog }}
+                            </DialogTitle>
+                            <DialogDescription class="text-xs">
+                                Isian dengan tanda asterik (*) harus diisi.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Form @closeModal="closeModal" />
+                    </DialogContent>
+                </Dialog>
+            </div>
             <div class="flex items-center justify-between mb-10">
                 <div class="flex lg:w-full md:w-full">
                     <div class="relative lg:w-full md:w-full">
@@ -41,19 +64,33 @@
                                 <TableHead class="w-[3%]">
                                     No.
                                 </TableHead>
-                                <TableHead class="w-[95%]">
+                                <TableHead class="w-[82%]">
                                     <Button variant="ghost" class="text-[13px]" @click="order('name')">
                                         Perizinan Aplikasi
                                         <ArrowUpDown class="h-4 w-4 ml-2" />
                                     </Button>
                                 </TableHead>
+                                <TableHead class="w-[15%] text-center">
+                                    
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             <TableRow v-for="(item, index) in permissions?.data" :key="index">
-                                <TableCell>{{ (permissions?.current_page - 1) * permissions?.per_page + index + 1 }}.
+                                <TableCell>
+                                    {{ (permissions?.current_page - 1) * permissions?.per_page + index + 1 }}.
                                 </TableCell>
-                                <TableCell class="text-[13px] !px-8">{{ item.name }}</TableCell>
+                                <TableCell class="text-[13px] px-8">{{ item.name }}</TableCell>
+                                <TableCell class="text-[13px] text-xs flex justify-end space-x-2">
+                                    <Button class="text-xs h-2 px-2 text-green-500" variant="link" @click="editData(item)">Ubah
+                                        <Icon :style="{ color: 'text-green-500', 'margin-left': '2px' }"
+                                        :icon="'ri:edit-line'" :inline="true" :height="'15'" />
+                                    </Button>
+                                    <Button class="text-xs px-2 text-red-500 h-2" variant="link" @click="deleteData(item.id)">Hapus
+                                        <Icon :style="{ color: 'text-green-500', 'margin-left': '2px' }"
+                                        :icon="'ri:delete-bin-line'" :inline="true" :height="'15'" />
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                             <TableEmpty v-if="!isData" :colspan="2" class="text-[13px]">
                                 <div class="flex flex-col items-center justify-center h-full">
@@ -73,7 +110,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import Info from '@/Components/widget/Info.vue';
@@ -100,6 +137,17 @@ import Pagination from '@/Components/widget/Pagination.vue';
 import { cloneDeep, debounce, pickBy } from "lodash";
 import NoData from '@/Components/widget/NoData.vue';
 import Button from '@/shadcn/ui/button/Button.vue';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/shadcn/ui/dialog';
+import { Icon } from '@iconify/vue';
+import Form from '@/Pages/Apps/Permission/Form.vue';
 
 const props = defineProps({
     permissions: Object,
@@ -149,8 +197,20 @@ const breadcrumb = [
     }
 ];
 
-const subtitles = 'Layanan perizinan aplikasi meliputi lihat data perizinan penggunaan aplikasi.';
+const subtitles = 'Layanan perizinan aplikasi meliputi lihat, tambah, edit, dan hapus data perizinan penggunaan aplikasi.';
+const headerModalDialog = computed(() => {
+    return isEditData.value ? 'Edit Perizinan Aplikasi' : 'Tambah Perizinan Pengguna Aplikasi';
+});
+
 const isData = computed(() => props.permissions.data.length > 0);
+
+const isEditData = ref(false);
+const isDataEdit = ref({});
+const openModal = ref(false);
+
+const closeModal = () => {
+    openModal.value = false;
+}
 
 watch(() => cloneDeep(data.params), debounce(() => {
     let param = pickBy(data.params)

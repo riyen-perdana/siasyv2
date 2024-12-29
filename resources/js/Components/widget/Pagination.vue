@@ -63,21 +63,36 @@ const props = defineProps({
 });
 
 const loadPage = (page) => {
+    if (props.field && props.order) {
+        router.get(
+            "/apps/perizinan-aplikasi",
+            {
+                page: page,
+                perPage: props.perPage,
+                search: props.search,
+                field: props.field,
+                order: props.order,
+            },
+            {
+                replace: true,
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
+    }
     router.get(
-        "/apps/perizinan-aplikasi",
-        {
-            page: page,
-            perPage: props.perPage,
-            search: props.search,
-            field: props.field,
-            order: props.order
-        },
-        {
-            replace: true,
-            preserveState: true,
-            preserveScroll: true,
-        }
-    );
+            "/apps/perizinan-aplikasi",
+            {
+                page: page,
+                perPage: props.perPage,
+                search: props.search
+            },
+            {
+                replace: true,
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
 };
 
 const noPreviousPage = computed(() => {
@@ -87,7 +102,6 @@ const noPreviousPage = computed(() => {
 const noNextPage = computed(() => {
     return props.count?.current_page >= props.count?.last_page;
 });
-
 
 const firstDisabled = computed(() => {
     if (props.count?.current_page === 1) {
