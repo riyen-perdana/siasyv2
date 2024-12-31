@@ -4,10 +4,12 @@ import Input from '@/shadcn/ui/input/Input.vue';
 import { useForm, router } from '@inertiajs/vue3';
 import { Label } from '@/shadcn/ui/label';
 import { Icon } from '@iconify/vue';
-import { onUnmounted, nextTick, ref, onMounted } from 'vue';
+import { onUnmounted, nextTick, ref, onMounted, watchEffect } from 'vue';
 
 const props = defineProps({
-    errors: Object
+    errors: Object,
+    isEdit: Boolean,
+    data: Object
 });
 
 const nm_perizinan = ref(null);
@@ -17,7 +19,8 @@ const form = useForm({
 });
 
 const submitData = () => {
-    router.post('/apps/perizinan-aplikasi', 
+    if (props.isEdit) {
+        router.put(`/apps/perizinan-aplikasi/${props.data.id}`, 
         form,
         {
             preserveScroll: true,
@@ -33,6 +36,24 @@ const submitData = () => {
                 nextTick(() => nm_perizinan.value.$el.focus());
                 }
         });
+    } else {
+        router.post('/apps/perizinan-aplikasi', 
+        form,
+        {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                form.reset();
+                form.clearErrors();
+                emit('closeModal');
+                emit('toastMessage');
+            },
+            onError: () => {
+                form.cancel,
+                nextTick(() => nm_perizinan.value.$el.focus());
+                }
+        });
+    }
 }
 
 const emit = defineEmits(['closeModal','toastMessage']);
@@ -44,6 +65,12 @@ onUnmounted(() => {
 
 onMounted(() => {
     nextTick(() => nm_perizinan.value.$el.focus());
+});
+
+watchEffect(() => {
+    if(props.isEdit) {
+        form.nm_perizinan = props.data.name;
+    }
 });
 
 </script>

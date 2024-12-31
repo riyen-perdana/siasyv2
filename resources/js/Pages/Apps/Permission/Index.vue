@@ -15,7 +15,7 @@
                         <Button
                             variant="default"
                             class="text-xs rounded-none"
-                            @click="openModal = true"
+                            @click="addData()"
                         >
                             Tambah Perizinan
                             <Icon
@@ -40,6 +40,8 @@
                         </DialogHeader>
                         <Form
                             :errors="$page.props.errors"
+                            :isEdit = "isEditData"
+                            :data="data.dataEdit"
                             @closeModal="closeModal"
                             @toastMessage="toastMessage"
                         />
@@ -102,9 +104,7 @@
                     >
                         <TableHeader>
                             <TableRow>
-                                <!-- <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input type="checkbox" :checked="data.isAllSelected" @click="selectAll()"></TableHead> -->
                                 <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.isAllSelected" @click="selectAll()"></TableHead>
-                                <!-- <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><Checkbox v-model="data.isAllSelected" @click="selectAll()" /></TableHead> -->
                                 <TableHead class="w-[3%]">No.</TableHead>
                                 <TableHead class="w-[82%]">
                                     <Button
@@ -125,8 +125,7 @@
                                 v-for="(item, index) in permissions?.data"
                                 :key="index"
                             >
-                                <TableCell class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.selectedItems" :value="item.id" @change="data.isAllSelected = false"></TableCell>
-                                <!-- <TableCell class="[&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><Checkbox v-model:checked="data.selectedItems" :value="item.id.toString()"/></TableCell> -->
+                                <TableCell class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.selectedItems" :value="item.id" @change=""></TableCell>
                                 <TableCell>
                                     {{
                                         (permissions?.current_page - 1) *
@@ -289,13 +288,14 @@ import { Toaster } from '@/shadcn/ui/toast';
 
 import { Icon } from "@iconify/vue";
 import Form from "@/Pages/Apps/Permission/Form.vue";
-import Checkbox from "@/shadcn/ui/checkbox/Checkbox.vue";
 
 const props = defineProps({
     permissions: Object,
     filters: Object,
     perPage: Number,
 });
+
+const isEditData = ref(false);
 
 const { toast } = useToast();
 
@@ -326,7 +326,8 @@ const data = reactive({
         perPage: perPageData.value,
     },
     isAllSelected: false,
-    selectedItems : []
+    selectedItems : [],
+    dataEdit : {}
 });
 
 const selectAll = () => {
@@ -360,6 +361,7 @@ const breadcrumb = [
 
 const subtitles =
     "Layanan perizinan aplikasi meliputi lihat, tambah, edit, dan hapus data perizinan penggunaan aplikasi.";
+
 const headerModalDialog = computed(() => {
     return isEditData.value
         ? "Edit Perizinan Aplikasi"
@@ -367,12 +369,22 @@ const headerModalDialog = computed(() => {
 });
 
 const isData = computed(() => props.permissions.data.length > 0);
-
-const isEditData = ref(false);
 const isDataEdit = ref({});
 const openModal = ref(false);
 
+const addData = () => {
+    isEditData.value = false;
+    openModal.value = true;
+}
+
+const editData = (item) => {
+    isEditData.value = true;
+    openModal.value = true;
+    data.dataEdit = item
+}
+
 const closeModal = () => {
+    isEditData.value = false;
     openModal.value = false;
 };
 
