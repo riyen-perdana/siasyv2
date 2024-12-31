@@ -4,7 +4,7 @@ import Input from '@/shadcn/ui/input/Input.vue';
 import { useForm, router } from '@inertiajs/vue3';
 import { Label } from '@/shadcn/ui/label';
 import { Icon } from '@iconify/vue';
-import { onUnmounted, nextTick, ref } from 'vue';
+import { onUnmounted, nextTick, ref, onMounted } from 'vue';
 
 const props = defineProps({
     errors: Object
@@ -41,6 +41,10 @@ onUnmounted(() => {
     form.reset();
     props.errors.nm_perizinan = '';
 })
+
+onMounted(() => {
+    nextTick(() => nm_perizinan.value.$el.focus());
+});
 
 </script>
 

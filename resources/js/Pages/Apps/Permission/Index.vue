@@ -102,7 +102,10 @@
                     >
                         <TableHeader>
                             <TableRow>
-                                <TableHead class="w-[3%]"> No. </TableHead>
+                                <!-- <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input type="checkbox" :checked="data.isAllSelected" @click="selectAll()"></TableHead> -->
+                                <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.isAllSelected" @click="selectAll()"></TableHead>
+                                <!-- <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><Checkbox v-model="data.isAllSelected" @click="selectAll()" /></TableHead> -->
+                                <TableHead class="w-[3%]">No.</TableHead>
                                 <TableHead class="w-[82%]">
                                     <Button
                                         variant="ghost"
@@ -122,6 +125,8 @@
                                 v-for="(item, index) in permissions?.data"
                                 :key="index"
                             >
+                                <TableCell class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.selectedItems" :value="item.id" @change="data.isAllSelected = false"></TableCell>
+                                <!-- <TableCell class="[&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><Checkbox v-model:checked="data.selectedItems" :value="item.id.toString()"/></TableCell> -->
                                 <TableCell>
                                     {{
                                         (permissions?.current_page - 1) *
@@ -284,6 +289,7 @@ import { Toaster } from '@/shadcn/ui/toast';
 
 import { Icon } from "@iconify/vue";
 import Form from "@/Pages/Apps/Permission/Form.vue";
+import Checkbox from "@/shadcn/ui/checkbox/Checkbox.vue";
 
 const props = defineProps({
     permissions: Object,
@@ -319,7 +325,20 @@ const data = reactive({
         order: props.filters.order,
         perPage: perPageData.value,
     },
+    isAllSelected: false,
+    selectedItems : []
 });
+
+const selectAll = () => {
+    data.isAllSelected = !data.isAllSelected;
+    if(data.isAllSelected){
+        data.selectedItems = props.permissions.data.map((item) => item.id);
+    } else {
+        data.selectedItems = [];
+    }
+    console.log(data.selectedItems);
+    console.log('Jumlah Data Di Pilih : ' + data.selectedItems.length);
+};
 
 const order = (column) => {
     data.params.field = column;
@@ -365,7 +384,24 @@ const toastMessage = () => {
     });
 };
 const deleteData = (id) => {
-    router.delete(`/apps/perizinan-aplikasi/${id}`);
+    router.delete(`/apps/perizinan-aplikasi/${id}`,{
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+            toast({
+                title: 'Berhasil !!',
+                description: 'Perizinan Aplikasi Berhasil Dihapus.',
+                variant: 'success',
+            });
+        },
+        onError: () => {
+            toast({
+                title: 'Ups, Terjadi Kesalahan !!',
+                description: 'Perizinan Aplikasi Gagal Dihapus.',
+                variant: 'destructive',
+            });
+        }
+    });
 };
 
 watch(

@@ -61,5 +61,24 @@ class PermissionController extends Controller
             return redirect()->back()->with('error', $th->getMessage());
 
         }
-    }   
+    }
+    
+    /**
+     * TODO : Delete Data Permission from Database
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+        try {
+            Permission::destroy($id);
+
+            DB::commit();
+            return redirect()->route('apps.permission.index');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
 }

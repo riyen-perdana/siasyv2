@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const props = defineProps({
   defaultChecked: { type: Boolean, required: false },
-  checked: { type: [Boolean, String], required: false },
+  checked: { type: [Boolean, String, Number], required: false },
   disabled: { type: Boolean, required: false },
   required: { type: Boolean, required: false },
   name: { type: String, required: false },
@@ -37,6 +37,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
     :class="
       cn(
         'peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
+        // 'peer h-4 w-4 flex items-center justify-center shrink-0 rounded-sm border border-input ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary',
         props.class,
       )
     "

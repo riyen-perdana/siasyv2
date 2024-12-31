@@ -13,6 +13,8 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'dashboard.index', 'guard_name' => 'web']);
+        for ($i = 1; $i < 101; $i++) {
+            Permission::create(['name' => 'dashboard'.$i.'index', 'guard_name' => 'web']);   
+        }
     }
 }
