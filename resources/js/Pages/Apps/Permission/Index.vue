@@ -37,7 +37,6 @@
                             variant="default"
                             class="text-xs rounded-none"
                             @click="addData()"
-                            @click="addData()"
                         >
                             Tambah Perizinan
                             <Icon
@@ -339,8 +338,6 @@ const props = defineProps({
     filters: Object,
     perPage: Number,
 });
-
-const isEditData = ref(false);
 
 const { toast } = useToast();
 
