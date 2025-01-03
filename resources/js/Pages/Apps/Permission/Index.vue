@@ -37,6 +37,7 @@
                             variant="default"
                             class="text-xs rounded-none"
                             @click="addData()"
+                            @click="addData()"
                         >
                             Tambah Perizinan
                             <Icon
@@ -339,6 +340,8 @@ const props = defineProps({
     perPage: Number,
 });
 
+const isEditData = ref(false);
+
 const { toast } = useToast();
 
 const perPageData = computed({
@@ -419,6 +422,7 @@ const breadcrumb = [
 
 const subtitles =
     "Layanan perizinan aplikasi meliputi lihat, tambah, edit, dan hapus data perizinan penggunaan aplikasi.";
+
 const headerModalDialog = computed(() => {
     return isEditData.value
         ? "Edit Perizinan Aplikasi"
@@ -428,6 +432,7 @@ const headerModalDialog = computed(() => {
 const isData = computed(() => props.permissions.data.length > 0);
 
 const isEditData = ref(false);
+const isDataEdit = ref({});
 const openModal = ref(false);
 
 const addData = () => {
@@ -442,6 +447,7 @@ const editData = (item) => {
 };
 
 const closeModal = () => {
+    isEditData.value = false;
     openModal.value = false;
 };
 
