@@ -100,5 +100,21 @@ class PermissionController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
         }
-    }   
+    }
+    
+    public function deleteAll(Request $request)
+    {
+        // dd($request->ids);
+        DB::beginTransaction();
+        try {
+            foreach ($request->ids as $id) {
+                Permission::destroy($id);
+            }
+            DB::commit();
+            return redirect()->route('apps.permission.index');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
 }

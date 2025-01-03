@@ -12,9 +12,9 @@
             <div class="flex flex-row items-center justify-end">
                 <div class="flex items-center space-x-2" v-if="isSelected">
                     <p class="text-[13px] underline text-red-500 font-semibold">
-                        {{ data.selectedItems.length }} data perizinan terpilih
+                        {{ data.selectedItems.length }} data perizinan dipilih
                     </p>
-                    <Button variant="destructive" class="text-xs rounded-none">
+                    <Button variant="destructive" class="text-xs rounded-none" @click="deleteAllSelected()">
                         Hapus Perizinan
                         <Icon
                             :style="{
@@ -482,6 +482,36 @@ const deleteData = (id) => {
             });
         },
     });
+};
+
+const deleteAllSelected = () => {
+    //console.log(data.selectedItems);
+    router.post(
+        "/apps/perizinan-aplikasi/delete-all",
+        {
+            ids: data.selectedItems,
+        },
+        {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                toast({
+                    title: "Berhasil !!",
+                    description: "Perizinan Aplikasi Berhasil Dihapus.",
+                    variant: "success",
+                });
+                data.selectedItems = []
+                data.isAllSelected = false
+            },
+            onError: () => {
+                toast({
+                    title: "Ups, Terjadi Kesalahan !!",
+                    description: "Perizinan Aplikasi Gagal Dihapus.",
+                    variant: "destructive",
+                });
+            },
+        }
+    );
 };
 
 watch(

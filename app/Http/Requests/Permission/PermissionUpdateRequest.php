@@ -22,7 +22,7 @@ class PermissionUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nm_perizinan' => 'required|unique:permissions,name,'.$this->permission.',id',
+            'nm_perizinan' => 'required|unique:permissions,name'
         ];
     }
 
