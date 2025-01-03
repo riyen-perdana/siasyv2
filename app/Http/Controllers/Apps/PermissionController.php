@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Permission;
 use App\Http\Requests\User\UserIndexRequest;
 use App\Http\Requests\Permission\PermissionStoreRequest;
+use App\Http\Requests\Permission\PermissionUpdateRequest;
 
 class PermissionController extends Controller
 {
@@ -81,4 +82,23 @@ class PermissionController extends Controller
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
+
+    public function update(PermissionUpdateRequest $request,$id)
+    {
+        DB::beginTransaction();
+        try {
+            $permission = Permission::findOrFail($id);
+            $permission->update([
+                'name' => $request['nm_perizinan']
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('apps.permission.index');
+        }
+        catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }   
 }

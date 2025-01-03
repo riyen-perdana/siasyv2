@@ -10,12 +10,33 @@
             />
             <div class="flex mt-4"></div>
             <div class="flex flex-row items-center justify-end">
-                <Dialog v-model:open="openModal" :modal="true">
+                <div class="flex items-center space-x-2" v-if="isSelected">
+                    <p class="text-[13px] underline text-red-500 font-semibold">
+                        {{ data.selectedItems.length }} data perizinan terpilih
+                    </p>
+                    <Button variant="destructive" class="text-xs rounded-none">
+                        Hapus Perizinan
+                        <Icon
+                            :style="{
+                                color: 'text-foreground',
+                                'margin-left': '5px',
+                            }"
+                            :icon="'basil:folder-delete-outline'"
+                            :inline="true"
+                            :height="'20'"
+                        />
+                    </Button>
+                </div>
+                <Dialog
+                    v-model:open="openModal"
+                    :modal="true"
+                    v-if="!isSelected"
+                >
                     <DialogTrigger as-child>
                         <Button
                             variant="default"
                             class="text-xs rounded-none"
-                            @click="openModal = true"
+                            @click="addData()"
                         >
                             Tambah Perizinan
                             <Icon
@@ -40,6 +61,7 @@
                         </DialogHeader>
                         <Form
                             :errors="$page.props.errors"
+                            :data="data.dataEdit"
                             @closeModal="closeModal"
                             @toastMessage="toastMessage"
                         />
@@ -102,9 +124,14 @@
                     >
                         <TableHeader>
                             <TableRow>
-                                <!-- <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input type="checkbox" :checked="data.isAllSelected" @click="selectAll()"></TableHead> -->
-                                <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.isAllSelected" @click="selectAll()"></TableHead>
-                                <!-- <TableHead class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><Checkbox v-model="data.isAllSelected" @click="selectAll()" /></TableHead> -->
+                                <TableHead
+                                    class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"
+                                    ><input
+                                        class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                        type="checkbox"
+                                        v-model="data.isAllSelected"
+                                        @click="selectAll()"
+                                /></TableHead>
                                 <TableHead class="w-[3%]">No.</TableHead>
                                 <TableHead class="w-[82%]">
                                     <Button
@@ -125,8 +152,15 @@
                                 v-for="(item, index) in permissions?.data"
                                 :key="index"
                             >
-                                <TableCell class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><input class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" type="checkbox" v-model="data.selectedItems" :value="item.id" @change="data.isAllSelected = false"></TableCell>
-                                <!-- <TableCell class="[&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"><Checkbox v-model:checked="data.selectedItems" :value="item.id.toString()"/></TableCell> -->
+                                <TableCell
+                                    class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"
+                                    ><input
+                                        class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                        type="checkbox"
+                                        v-model="data.selectedItems"
+                                        :value="item.id"
+                                        @change="selectItem()"
+                                /></TableCell>
                                 <TableCell>
                                     {{
                                         (permissions?.current_page - 1) *
@@ -165,32 +199,42 @@
                                             <Button
                                                 class="text-xs px-2 text-red-500 h-2"
                                                 variant="link"
-                                            >Hapus
-                                            <Icon
-                                                :style="{
-                                                    color: 'text-green-500',
-                                                    'margin-left': '2px',
-                                                }"
-                                                :icon="'ri:delete-bin-line'"
-                                                :inline="true"
-                                                :height="'15'"
-                                            />
+                                                >Hapus
+                                                <Icon
+                                                    :style="{
+                                                        color: 'text-green-500',
+                                                        'margin-left': '2px',
+                                                    }"
+                                                    :icon="'ri:delete-bin-line'"
+                                                    :inline="true"
+                                                    :height="'15'"
+                                                />
                                             </Button>
                                         </AlertDialogTrigger>
                                         <AlertDialogContent>
                                             <AlertDialogHeader>
                                                 <AlertDialogTitle>
-                                                    Apakah Anda Yakin Akan Menghapus Data Ini?
+                                                    Apakah Anda Yakin Akan
+                                                    Menghapus Data Ini?
                                                 </AlertDialogTitle>
-                                                <AlertDialogDescription class="text-xs">
-                                                    Data Tidak Akan Bisa Dikembalikan Apabila Sudah Dihapus.
+                                                <AlertDialogDescription
+                                                    class="text-xs"
+                                                >
+                                                    Data Tidak Akan Bisa
+                                                    Dikembalikan Apabila Sudah
+                                                    Dihapus.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel class="text-xs ring-inset rounded-none">
+                                                <AlertDialogCancel
+                                                    class="text-xs ring-inset rounded-none"
+                                                >
                                                     Batal
                                                 </AlertDialogCancel>
-                                                <AlertDialogAction class="text-xs ring-inset rounded-none bg-red-500 hover:bg-red-600" @click="deleteData(item.id)">
+                                                <AlertDialogAction
+                                                    class="text-xs ring-inset rounded-none bg-red-500 hover:bg-red-600"
+                                                    @click="deleteData(item.id)"
+                                                >
                                                     Ya, Saya Yakin
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>
@@ -249,7 +293,7 @@ import {
 } from "@/shadcn/ui/table";
 import Separator from "@/shadcn/ui/separator/Separator.vue";
 import Input from "@/shadcn/ui/input/Input.vue";
-import { Search, ChevronDown, ChevronUp, ArrowUpDown } from "lucide-vue-next";
+import { Search, ArrowUpDown } from "lucide-vue-next";
 import {
     Select,
     SelectContent,
@@ -266,7 +310,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -284,12 +327,11 @@ import {
     AlertDialogTrigger,
 } from "@/shadcn/ui/alert-dialog";
 
-import { useToast } from '@/shadcn/ui/toast/use-toast';
-import { Toaster } from '@/shadcn/ui/toast';
+import { useToast } from "@/shadcn/ui/toast/use-toast";
+import { Toaster } from "@/shadcn/ui/toast";
 
 import { Icon } from "@iconify/vue";
 import Form from "@/Pages/Apps/Permission/Form.vue";
-import Checkbox from "@/shadcn/ui/checkbox/Checkbox.vue";
 
 const props = defineProps({
     permissions: Object,
@@ -326,19 +368,36 @@ const data = reactive({
         perPage: perPageData.value,
     },
     isAllSelected: false,
-    selectedItems : []
+    selectedItems: [],
+    dataEdit: {},
 });
 
 const selectAll = () => {
     data.isAllSelected = !data.isAllSelected;
-    if(data.isAllSelected){
+    if (data.isAllSelected) {
         data.selectedItems = props.permissions.data.map((item) => item.id);
     } else {
         data.selectedItems = [];
     }
     console.log(data.selectedItems);
-    console.log('Jumlah Data Di Pilih : ' + data.selectedItems.length);
+    console.log("Jumlah Data Di Pilih : " + data.selectedItems.length);
 };
+
+const selectItem = () => {
+    if (data.selectedItems.length == props.permissions.data.length) {
+        data.isAllSelected = true;
+        console.log(data.selectedItems);
+        console.log("Jumlah Data Di Pilih : " + data.selectedItems.length);
+    } else {
+        data.isAllSelected = false;
+        console.log(data.selectedItems);
+        console.log("Jumlah Data Di Pilih : " + data.selectedItems.length);
+    }
+};
+
+const isSelected = computed(() => {
+    return data.selectedItems.length > 0 ? true : false;
+});
 
 const order = (column) => {
     data.params.field = column;
@@ -369,38 +428,56 @@ const headerModalDialog = computed(() => {
 const isData = computed(() => props.permissions.data.length > 0);
 
 const isEditData = ref(false);
-const isDataEdit = ref({});
 const openModal = ref(false);
+
+const addData = () => {
+    openModal.value = true;
+    isEditData.value = false;
+    data.dataEdit = {};
+};
+const editData = (item) => {
+    data.dataEdit = item;
+    isEditData.value = true;
+    openModal.value = true;
+};
 
 const closeModal = () => {
     openModal.value = false;
 };
 
-const toastMessage = () => {
-    toast({
-        title: 'Berhasil !!',
-        description: 'Perizinan Aplikasi Berhasil Ditambahkan.',
-        variant: 'success',
-    });
+const toastMessage = (id) => {
+    if (id) {
+        toast({
+            title: "Berhasil !!",
+            description: "Perizinan Aplikasi Berhasil Diubah.",
+            variant: "success",
+        });
+    } else {
+        toast({
+            title: "Berhasil !!",
+            description: "Perizinan Aplikasi Berhasil Ditambahkan.",
+            variant: "success",
+        });
+    }
 };
 const deleteData = (id) => {
-    router.delete(`/apps/perizinan-aplikasi/${id}`,{
+    router.delete(`/apps/perizinan-aplikasi/${id}`, {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
             toast({
-                title: 'Berhasil !!',
-                description: 'Perizinan Aplikasi Berhasil Dihapus.',
-                variant: 'success',
+                title: "Berhasil !!",
+                description: "Perizinan Aplikasi Berhasil Dihapus.",
+                variant: "success",
             });
         },
         onError: () => {
             toast({
-                title: 'Ups, Terjadi Kesalahan !!',
-                description: 'Perizinan Aplikasi Gagal Dihapus.',
-                variant: 'destructive',
+                title: "Ups, Terjadi Kesalahan !!",
+                description: "Perizinan Aplikasi Gagal Dihapus.",
+                variant: "destructive",
             });
-        }
+        },
     });
 };
 
