@@ -35,6 +35,7 @@ Route::middleware('auth')->prefix('apps')->group(function () {
     Route::post('/perizinan-aplikasi/delete-all', [\App\Http\Controllers\Apps\PermissionController::class, 'deleteAll'])->name('apps.permission.deleteAll');
     Route::get('/perizinan-aplikasi-v2', [\App\Http\Controllers\Apps\PermissionsController::class, 'index'])->name('apps.permissionv2.index');
     Route::get('/otorisasi-aplikasi', [\App\Http\Controllers\Apps\RolesController::class, 'index'] )->name('apps.roles.index');
+    Route::get('/otorisasi-aplikasi/create', [\App\Http\Controllers\Apps\RolesController::class, 'create'])->name('apps.roles.create');
 });
 
 require __DIR__.'/auth.php';

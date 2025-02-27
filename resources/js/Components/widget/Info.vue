@@ -11,7 +11,7 @@
                 </p>
             </div>
             <div v-else>
-                <p class="text-[13px] text-muted-foreground">
+                <p class="text-[13px] text-muted-foreground mt-1">
                     {{ props.subtitles }}
                 </p>
             </div>

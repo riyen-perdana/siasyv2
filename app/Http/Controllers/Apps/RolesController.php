@@ -16,11 +16,20 @@ class RolesController extends Controller
     public function index()
     {
         $role = Role::with('permissions')->get();
-        $permission = Permission::all();
+        // $permission = Permission::all();
+        $data = Permission::orderBy('name')->pluck('name', 'id');
+        $collection = collect($data);
+        $permissions = $collection->groupBy(function ($item, $key) {
+            // Memecah string menjadi array kata-kata
+            $words = explode('.', $item);
+
+            // Mengambil kata pertama
+            return $words[0];
+        });
 
         return Inertia::render('Apps/Roles/Index', [
             'roles' => $role,
-            'permissions' => $permission
+            'permissions' => $permissions
         ]);
 
     }
@@ -30,7 +39,18 @@ class RolesController extends Controller
      */
     public function create()
     {
-        //
+        // get permissions
+        // $permissions = Permission::all();
+        $data = Permission::orderBy('name')->pluck('name', 'id');
+        $collection = collect($data);
+        $permissions = $collection->groupBy(function ($item, $key) {
+            // Memecah string menjadi array kata-kata
+            $words = explode('.', $item);
+
+            // Mengambil kata pertama
+            return $words[0];
+        });
+        return $permissions;
     }
 
     /**
