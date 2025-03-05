@@ -14,7 +14,7 @@
                     <p class="text-[13px] underline text-red-500 font-semibold">
                         {{ data.selectedItems.length }} data otorisasi dipilih
                     </p>
-                    <Button variant="destructive" class="text-xs rounded-none" @click="deleteAllSelected()">
+                    <!-- <Button variant="destructive" class="text-xs rounded-none" @click="deleteAllSelected()">
                         Hapus Otorisasi
                         <Icon
                             :style="{
@@ -25,7 +25,50 @@
                             :inline="true"
                             :height="'20'"
                         />
-                    </Button>
+                    </Button> -->
+                    <AlertDialog>
+                        <AlertDialogTrigger as-child>
+                            <Button
+                                variant="destructive"
+                                class="text-xs rounded-none"
+                            >
+                                Hapus Otorisasi
+                                <Icon
+                                    :style="{
+                                        color: 'text-foreground',
+                                        'margin-left': '5px',
+                                    }"
+                                    :icon="'basil:folder-delete-outline'"
+                                    :inline="true"
+                                    :height="'20'"
+                                />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Apakah Anda Yakin Akan Menghapus Data Ini?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription class="text-xs">
+                                    Data Tidak Akan Bisa Dikembalikan Apabila
+                                    Sudah Dihapus.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel
+                                    class="text-xs ring-inset rounded-none"
+                                >
+                                    Batal
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                    class="text-xs ring-inset rounded-none bg-red-500 hover:bg-red-600"
+                                    @click="deleteAllSelected()"
+                                >
+                                    Ya, Saya Yakin
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
                 <Dialog
                     v-model:open="openModal"
@@ -50,7 +93,9 @@
                             />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent class="sm:max-w-[425px] md:max-w-[700px] overflow-y-scroll max-h-screen">
+                    <DialogContent
+                        class="sm:max-w-[425px] md:max-w-[700px] overflow-y-scroll max-h-screen"
+                    >
                         <DialogHeader>
                             <DialogTitle>
                                 {{ headerModalDialog }}
@@ -123,7 +168,7 @@
                         class="text-[13px] rounded-md border"
                         :class="isData ? 'border-b' : ''"
                     >
-                    <TableHeader>
+                        <TableHeader>
                             <TableRow>
                                 <TableHead
                                     class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"
@@ -154,28 +199,41 @@
                         <TableBody>
                             <TableRow
                                 v-for="(item, index) in roles?.data"
-                                :key="index">
+                                :key="index"
+                            >
                                 <TableCell
-                                        class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"
-                                        ><input
-                                            class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                                            type="checkbox"
-                                            v-model="data.selectedItems"
-                                            :value="item.id"
-                                            @change="selectItem()"
-                                    /></TableCell>
-                                    <TableCell class="w-[3%]">{{ 
-                                        (roles?.current_page - 1) * roles?.per_page + index + 1
-                                    }}.</TableCell>
-                                    <TableCell class="w-[20%]">
-                                        {{ item.name }}
-                                    </TableCell>
-                                    <TableCell class="w-[62%]">
-                                        <Badge variant="outline" v-for="(permission, index) in item.permissions" :key="index" class="mr-2 mb-2 font-normal">
-                                            {{ permission.name }}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell
+                                    class="w-[2%] [&:has([role=checkbox])]:inline-flex [&:has([role=checkbox])]:items-center"
+                                    ><input
+                                        class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                        type="checkbox"
+                                        v-model="data.selectedItems"
+                                        :value="item.id"
+                                        @change="selectItem()"
+                                /></TableCell>
+                                <TableCell class="w-[3%]"
+                                    >{{
+                                        (roles?.current_page - 1) *
+                                            roles?.per_page +
+                                        index +
+                                        1
+                                    }}.</TableCell
+                                >
+                                <TableCell class="w-[20%]">
+                                    {{ item.name }}
+                                </TableCell>
+                                <TableCell class="w-[62%]">
+                                    <Badge
+                                        variant="outline"
+                                        v-for="(
+                                            permission, index
+                                        ) in item.permissions"
+                                        :key="index"
+                                        class="mr-2 mb-2 font-normal"
+                                    >
+                                        {{ permission.name }}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell
                                     class="text-[13px] text-xs flex justify-end space-x-2"
                                 >
                                     <Button
@@ -254,7 +312,8 @@
                 </div>
             </section>
         </template>
-    </AuthenticatedLayout>    <Toaster />
+    </AuthenticatedLayout>
+    <Toaster />
 </template>
 
 <script setup>
@@ -307,13 +366,13 @@ import {
     AlertDialogTrigger,
 } from "@/shadcn/ui/alert-dialog";
 
-import Badge from '@/shadcn/ui/badge/Badge.vue'
+import Badge from "@/shadcn/ui/badge/Badge.vue";
 
 import { useToast } from "@/shadcn/ui/toast/use-toast";
 import { Toaster } from "@/shadcn/ui/toast";
 
 import { Icon } from "@iconify/vue";
-import Form from '@/Pages/Apps/Roles/Form.vue';
+import Form from "@/Pages/Apps/Roles/Form.vue";
 
 const props = defineProps({
     roles: Object,
@@ -406,12 +465,17 @@ const headerModalDialog = computed(() => {
         : "Tambah Otorisasi Pengguna Aplikasi";
 });
 
-const subtitles = 'Layanan otorisasi pengguna aplikasi meliputi lihat, tambah, edit, dan hapus data otorisasi pengguna aplikasi.';
+const subtitles =
+    "Layanan otorisasi pengguna aplikasi meliputi lihat, tambah, edit, dan hapus data otorisasi pengguna aplikasi.";
 const headerDialog = computed(() => {
-    return isEditData.value ? 'Edit Otorisasi Pengguna Aplikasi' : 'Tambah Otorisasi Pengguna Aplikasi';
+    return isEditData.value
+        ? "Edit Otorisasi Pengguna Aplikasi"
+        : "Tambah Otorisasi Pengguna Aplikasi";
 });
 const descriptionDialog = computed(() => {
-    return isEditData.value ? 'Edit data otorisasi pengguna aplikasi.' : 'Tambah data otorisasi pengguna aplikasi, Isian dengan tanda asterik (*) harus diisi.';
+    return isEditData.value
+        ? "Edit data otorisasi pengguna aplikasi."
+        : "Tambah data otorisasi pengguna aplikasi, Isian dengan tanda asterik (*) harus diisi.";
 });
 
 const isData = computed(() => props.roles.data.length > 0);
@@ -475,7 +539,7 @@ const deleteData = (id) => {
 const deleteAllSelected = () => {
     //console.log(data.selectedItems);
     router.post(
-        "/apps/perizinan-aplikasi/delete-all",
+        "/apps/otorisasi-aplikasi/delete-all",
         {
             ids: data.selectedItems,
         },
@@ -485,16 +549,16 @@ const deleteAllSelected = () => {
             onSuccess: () => {
                 toast({
                     title: "Berhasil !!",
-                    description: "Perizinan Aplikasi Berhasil Dihapus.",
+                    description: "Otorisasi Aplikasi Berhasil Dihapus.",
                     variant: "success",
                 });
-                data.selectedItems = []
-                data.isAllSelected = false
+                data.selectedItems = [];
+                data.isAllSelected = false;
             },
             onError: () => {
                 toast({
                     title: "Ups, Terjadi Kesalahan !!",
-                    description: "Perizinan Aplikasi Gagal Dihapus.",
+                    description: "Otorisasi Aplikasi Gagal Dihapus.",
                     variant: "destructive",
                 });
             },

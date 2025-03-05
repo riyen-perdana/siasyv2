@@ -62,7 +62,17 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        
+        DB::beginTransaction();
+        try {
+            $role = Role::create(['name' => $request->nm_role]);
+            $role->givePermissionTo($request->permission);
+            DB::commit();
+            return redirect()->route('apps.roles.index');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     /**
@@ -118,6 +128,21 @@ class RolesController extends Controller
             DB::commit();
             return redirect()->route('apps.roles.index');
 
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
+    public function deleteAll(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            foreach ($request->ids as $id) {
+                Role::destroy($id);
+            }
+            DB::commit();
+            return redirect()->route('apps.roles.index');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
