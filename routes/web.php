@@ -35,13 +35,13 @@ Route::middleware('auth')->prefix('apps')->group(function () {
     Route::post('/perizinan-aplikasi/delete-all', [\App\Http\Controllers\Apps\PermissionController::class, 'deleteAll'])->name('apps.permission.deleteAll');
     Route::get('/perizinan-aplikasi-v2', [\App\Http\Controllers\Apps\PermissionsController::class, 'index'])->name('apps.permissionv2.index');
     
-    
-    
     Route::get('/otorisasi-aplikasi', [\App\Http\Controllers\Apps\RolesController::class, 'index'] )->name('apps.roles.index');
     Route::post('/otorisasi-aplikasi', [\App\Http\Controllers\Apps\RolesController::class, 'store'])->name('apps.roles.store');
     Route::delete('/otorisasi-aplikasi/{id}', [\App\Http\Controllers\Apps\RolesController::class, 'destroy'])->name('apps.roles.delete');
     Route::put('/otorisasi-aplikasi/{id}', [\App\Http\Controllers\Apps\RolesController::class, 'update'])->name('apps.roles.update');
     Route::post('/otorisasi-aplikasi/delete-all', [\App\Http\Controllers\Apps\RolesController::class, 'deleteAll'])->name('apps.roles.deleteAll');
+
+    Route::get('/pengguna-aplikasi', [\App\Http\Controllers\Apps\UsersController::class, 'index'])->name('apps.users.index');
 });
 
 require __DIR__.'/auth.php';

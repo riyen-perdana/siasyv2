@@ -8,8 +8,7 @@
             <MenubarContent>
                 <MenubarItem class="text-[13px]"><Link :href="route('apps.permission.index')">Perizinan Aplikasi</Link></MenubarItem>
                 <MenubarItem class="text-[13px]"><Link :href="route('apps.roles.index')">Otorisasi Aplikasi</Link></MenubarItem>
-                <MenubarItem class="text-[13px]">Pengguna</MenubarItem>
-                <MenubarSeparator />
+                <MenubarItem class="text-[13px]"><Link :href="route('apps.users.index')">Pengguna Aplikasi</Link></MenubarItem>
                 <MenubarItem class="text-[13px]">Mahasiswa</MenubarItem>
             </MenubarContent>
         </MenubarMenu>
